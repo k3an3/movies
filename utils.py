@@ -1,25 +1,33 @@
 import requests
+from peewee import IntegrityError
 
 from config import GOOGLE_API_KEY, GOOGLE_CX, IMDB_API_URL
 from models import Movie
 
 
 def help_text():
-    return """Invalid command. The following commands are recognized:
-    _choose [category]_ - Select a random movie in the given category. To pick from all categories, no extra argument is necessary.
-    _watched [movie]_ - Mark a movie as watched. This will prevent it from being selected again.
-    _add [movie]_ [-y year] - Add a movie to the list that you'd like to watch in the future.
-    """
+    return {'text': "Invalid command. The following commands are recognized:\n",
+            'attachments': [{
+                'text': ("_choose [category]_ - Select a random movie in the given category. "
+                         "To pick from all categories, no extra argument is necessary.\n"
+                         "_watched [movie]_ - Mark a movie as watched. "
+                         "This will prevent it from being selected again.\n"
+                         "_add [movie]_ [-y year] - Add a movie to the list that you'd like to watch in the future.\n"
+                         )
+            }]
+            }
 
 
 def add_movie(movie_title, year=""):
     url = IMDB_API_URL + '&t={}&y='.format(movie_title, year)
     r = requests.get(url).json()
     if r.get('Response') == 'False':
-        print("ombdapi failed, falling back to Google")
-        return False, """Oops, couldn't get an exact hit. Check your spelling and try again. Does this help?
-        {}""".format(custom_google_search(movie_title + " " + year))
-    return True, Movie.create(name=r['Title'], genre=r['Genre'], imdb_id=r['imdbID'])
+        return False, ("Oops, couldn't get an exact hit. Check your spelling and try again. Does this help?"
+                       "{}").format(custom_google_search(movie_title + " " + year))
+    try:
+        return True, Movie.create(name=r['Title'], genre=r['Genre'], imdb_id=r['imdbID'])
+    except IntegrityError:
+        return False, "This movie has already been added!"
 
 
 def custom_google_search(query):

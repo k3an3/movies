@@ -33,7 +33,13 @@ class Movie(BaseModel):
     def get_details(self):
         url = IMDB_API_URL + '&i={}'.format(self.imdb_id)
         r = requests.get(url).json()
-        return """
-        *{}* - _{}_
-        _{}_
-        {}""".format(r['Title'], r['Year'], r['Plot'], r.get('Poster', ''))
+        return {
+            'text': '',
+            'response_type': 'in_channel',
+            'attachments': [{
+                'title': r['Title'] + " - " + r['Year'],
+                'title_link': 'http://www.imdb.com/title/' + self.imdb_id,
+                'text': r['Plot'],
+                'image_url': r.get('Poster'),
+            }]
+        }
