@@ -1,7 +1,7 @@
 import json
 from functools import wraps
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, Response
 from peewee import fn
 
 from config import SLACK_TOKEN, SUPPORTED_COMMANDS, DEBUG
@@ -31,13 +31,13 @@ def index():
     args = text.split()
     # Check if we know about this command
     if len(args) == 0 or args[0] not in SUPPORTED_COMMANDS:
-        return json.dumps(help_text())
+        return Response(json.dumps(help_text()), mimetype='application/json')
     if args[0] == 'add':
         success, m = add_movie(' '.join(args[1:]))
         if success:
             data = m.get_details()
             m['text'] = "Added movie:"
-            return json.dumps(m)
+            return Response(json.dumps(data), mimetype='application/json')
         return m
 
     elif args[0] == 'choose':
@@ -48,7 +48,7 @@ def index():
         try:
             m = random.get().get_details()
             m['text'] = "You should watch this movie:"
-            return json.dumps(m)
+            return Response(json.dumps(m), mimetype='application/json')
         except Movie.DoesNotExist:
             return "No movies yet!"
     elif args[0] == 'watched':
