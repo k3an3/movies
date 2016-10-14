@@ -37,9 +37,10 @@ class Movie(BaseModel):
             'text': '',
             'response_type': 'in_channel',
             'attachments': [{
-                'title': r['Title'] + " - " + r['Year'],
+                'title': "{} ({})".format(r['Title'], r['Year']),
                 'title_link': 'http://www.imdb.com/title/' + self.imdb_id,
                 'text': r['Plot'],
                 'image_url': r.get('Poster'),
+                'color': '#764FA5',
             }]
         }

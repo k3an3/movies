@@ -35,10 +35,9 @@ def index():
     if args[0] == 'add':
         success, m = add_movie(' '.join(args[1:]))
         if success:
-            data = m.get_details()
+            m = m.get_details()
             m['text'] = "Added movie:"
-            return Response(json.dumps(data), mimetype='application/json')
-        return m
+        return Response(json.dumps(m), mimetype='application/json')
 
     elif args[0] == 'choose':
         if len(args) == 1:

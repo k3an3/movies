@@ -22,8 +22,7 @@ def add_movie(movie_title, year=""):
     url = IMDB_API_URL + '&t={}&y='.format(movie_title, year)
     r = requests.get(url).json()
     if r.get('Response') == 'False':
-        return False, ("Oops, couldn't get an exact hit. Check your spelling and try again. Does this help?"
-                       "{}").format(custom_google_search(movie_title + " " + year))
+        return False, custom_google_search(movie_title + " " + year)
     try:
         return True, Movie.create(name=r['Title'], genre=r['Genre'], imdb_id=r['imdbID'])
     except IntegrityError:
@@ -35,10 +34,15 @@ def custom_google_search(query):
         GOOGLE_API_KEY, GOOGLE_CX, query
     )
     r = requests.get(url).json()
-    response = ""
+    response = {'text': "Couldn't find an exact hit. Check your spelling and try again.",
+                'attachments': []
+                }
     if r.get('items'):
         for item in r['items'][:3]:
-            response += "{} -- {}".format(item.get('title'), item.get('snippet'))
+            response['attachments'].append({
+                'text': "{} -- {}".format(item.get('title'), item.get('snippet')),
+                'color': '#FF0000',
+            })
     else:
-        response = "Please try refining your search to make sure that you aren't crazy."
+        response = {'text': "Please try refining your search to make sure that you aren't crazy."}
     return response
