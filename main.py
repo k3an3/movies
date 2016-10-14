@@ -42,7 +42,10 @@ def index():
             random = Movie.select().order_by(fn.Random())
         else:
             random = Movie.filter(Movie.genre.lower() == ' '.join(args[1:]).lower())
-        return random.get().get_details()
+        try:
+            return random.get().get_details()
+        except Movie.DoesNotExist:
+            return "No movies yet!"
     elif args[0] == 'watched':
         try:
             movie = Movie.get(Movie.name.lower() == ' '.join(args[1:]).lower())
