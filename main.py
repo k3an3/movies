@@ -3,13 +3,11 @@ from functools import wraps
 from flask import Flask, request, abort
 from peewee import fn
 
+from config import SLACK_TOKEN, SUPPORTED_COMMANDS, DEBUG
 from models import db_init, Movie, db
 from utils import help_text, add_movie
 
 app = Flask(__name__)
-
-SLACK_TOKEN = 'peCu2HW2WdquZNZfqQk6YUcg'
-SUPPORTED_COMMANDS = ['watched', 'choose', 'add']
 
 
 def auth_required(f):
@@ -23,12 +21,12 @@ def auth_required(f):
     return decorated_function
 
 
-@app.route("/command")
+@app.route("/command", methods=['POST'])
 @auth_required
 def index():
     args = request.form.get('text').split()
     # Check if we know about this command
-    if args[0] not in SUPPORTED_COMMANDS:
+    if len(args) == 0 or args[0] not in SUPPORTED_COMMANDS:
         return help_text()
     if args[0] == 'add':
         return "Added:" + add_movie(' '.join(args[1:])).get_details()
@@ -36,8 +34,17 @@ def index():
         if len(args) == 1:
             random = Movie.select().order_by(fn.Random())
         else:
-            random = Movie.filter(Movie.genre == ' '.join(args[1:]))
+            random = Movie.filter(Movie.genre.lower() == ' '.join(args[1:]).lower())
         return random.get().get_details()
+    elif args[0] == 'watched':
+        try:
+            movie = Movie.get(Movie.name.lower() == ' '.join(args[1:]).lower())
+        except Movie.DoesNotExist:
+            return "Sorry, I couldn't find that movie."
+        movie.watched = True
+        movie.save()
+        return "Marked {} as watched".format(movie.name)
+    return ""
 
 
 # This hook ensures that a connection is opened to handle any queries
@@ -56,6 +63,6 @@ def _db_close(exc):
 
 
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = DEBUG
     db_init()
     app.run()

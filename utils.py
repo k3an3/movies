@@ -1,10 +1,7 @@
 import requests
 
+from config import GOOGLE_API_KEY, GOOGLE_CX, IMDB_API_URL
 from models import Movie
-
-GOOGLE_API_KEY = 'AIzaSyCa349yW3-oWMbYRHl21V1IgGRyM6O7PW4'
-GOOGLE_CX = '013724138961804180930:qcvlhom_j4e'
-IMDB_API = 'http://www.omdbapi.com/?type=movie'
 
 
 def help_text():
@@ -17,7 +14,7 @@ def help_text():
 
 
 def add_movie(movie_title, year=""):
-    url = IMDB_API + '&t={}&y='.format(movie_title, year)
+    url = IMDB_API_URL + '&t={}&y='.format(movie_title, year)
     r = requests.get(url).json()
     if r.get('Response') == 'False':
         print("ombdapi failed, falling back to Google")

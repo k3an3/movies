@@ -1,9 +1,7 @@
 import requests
 from peewee import *
 
-from utils import IMDB_API
-
-DEBUG = True
+from config import DEBUG, IMDB_API_URL
 
 if DEBUG:
     db = SqliteDatabase('app.db')
@@ -33,7 +31,7 @@ class Movie(BaseModel):
     watched = BooleanField(default=False)
 
     def get_details(self):
-        url = IMDB_API + '&i={}'.format(self.imdb_id)
+        url = IMDB_API_URL + '&i={}'.format(self.imdb_id)
         r = requests.get(url).json()
         return """
         *{}* - _{}_
