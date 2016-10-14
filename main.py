@@ -1,3 +1,4 @@
+import json
 from functools import wraps
 
 from flask import Flask, request, abort
@@ -34,7 +35,9 @@ def index():
     if args[0] == 'add':
         success, m = add_movie(' '.join(args[1:]))
         if success:
-            return "Added: " + m.get_details()
+            data = m.get_details()
+            m['text'] = "Added movie:"
+            return json.dumps(m)
         return m
 
     elif args[0] == 'choose':
@@ -43,7 +46,9 @@ def index():
         else:
             random = Movie.filter(Movie.genre.lower() == ' '.join(args[1:]).lower())
         try:
-            return random.get().get_details()
+            m = random.get().get_details()
+            m['text'] = "You should watch this movie:"
+            return json.dumps(m)
         except Movie.DoesNotExist:
             return "No movies yet!"
     elif args[0] == 'watched':
