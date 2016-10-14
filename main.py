@@ -31,7 +31,7 @@ def index():
     args = text.split()
     # Check if we know about this command
     if len(args) == 0 or args[0] not in SUPPORTED_COMMANDS:
-        return help_text()
+        return json.dumps(help_text())
     if args[0] == 'add':
         success, m = add_movie(' '.join(args[1:]))
         if success:
