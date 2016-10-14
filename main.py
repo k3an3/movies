@@ -21,15 +21,22 @@ def auth_required(f):
     return decorated_function
 
 
-@app.route("/command", methods=['POST'])
 @auth_required
+@app.route("/command", methods=['POST'])
 def index():
-    args = request.form.get('text').split()
+    text = request.form.get('text')
+    if not text:
+        return '', 400
+    args = text.split()
     # Check if we know about this command
     if len(args) == 0 or args[0] not in SUPPORTED_COMMANDS:
         return help_text()
     if args[0] == 'add':
-        return "Added:" + add_movie(' '.join(args[1:])).get_details()
+        success, m = add_movie(' '.join(args[1:]))
+        if success:
+            return "Added: " + m.get_details()
+        return m
+
     elif args[0] == 'choose':
         if len(args) == 1:
             random = Movie.select().order_by(fn.Random())
