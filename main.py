@@ -53,7 +53,7 @@ def index():
             return "No movies yet!"
     elif args[0] == 'watched':
         try:
-            movie = Movie.get(Movie.name.lower() == ' '.join(args[1:]).lower())
+            movie = Movie.get(Movie.name == ' '.join(args[1:]))
         except Movie.DoesNotExist:
             return "Sorry, I couldn't find that movie."
         movie.watched = True
