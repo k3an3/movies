@@ -6,7 +6,7 @@ from peewee import fn
 
 from config import SLACK_TOKEN, SUPPORTED_COMMANDS, DEBUG
 from models import db_init, Movie, db
-from utils import help_text, add_movie
+from utils import help_text, add_movie, custom_google_search
 
 app = Flask(__name__)
 
@@ -53,7 +53,8 @@ def index():
             return "No movies yet!"
     elif args[0] == 'watched':
         try:
-            movie = Movie.get(Movie.name == ' '.join(args[1:]))
+            name = custom_google_search(' '.join(args[1:]), mode='add')
+            movie = Movie.get(Movie.name == name)
         except Movie.DoesNotExist:
             return "Sorry, I couldn't find that movie."
         movie.watched = True

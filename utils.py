@@ -51,7 +51,7 @@ def custom_google_search(query, mode="search"):
             response = {'text': "Please try refining your search to make sure that you aren't crazy."}
     else:
         if r.get('items'):
-            return r['items'][0].get('title').split('-')[0]
+            return r['items'][0].get('title').split(' -')[1]
         else:
             response = {'text': "Please try refining your search to make sure that you aren't crazy."}
     return response
