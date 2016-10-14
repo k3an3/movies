@@ -18,10 +18,13 @@ def help_text():
             }
 
 
-def add_movie(movie_title, year=""):
+def add_movie(movie_title, year="", depth=0):
     url = IMDB_API_URL + '&t={}&y='.format(movie_title, year)
     r = requests.get(url).json()
     if r.get('Response') == 'False':
+        depth += 1
+        if depth < 3:
+            return True, add_movie(custom_google_search(movie_title + " " + year, "add"), depth=depth)
         return False, custom_google_search(movie_title + " " + year)
     try:
         return True, Movie.create(name=r['Title'], genre=r['Genre'], imdb_id=r['imdbID'])
@@ -29,22 +32,28 @@ def add_movie(movie_title, year=""):
         return False, {'text': "This movie has already been added!"}
 
 
-def custom_google_search(query):
+def custom_google_search(query, mode="search"):
     url = 'https://www.googleapis.com/customsearch/v1?key={}&cx={}&q={}'.format(
         GOOGLE_API_KEY, GOOGLE_CX, query
     )
     r = requests.get(url).json()
-    response = {'text': "Couldn't find an exact hit. Check your spelling and try again.",
-                'attachments': []
-                }
-    if r.get('items'):
-        for item in r['items'][:3]:
-            response['attachments'].append({
-                'text': "{} -- {}".format(item.get('title'), item.get('snippet')),
-                'color': '#FF0000',
-            })
+    if mode == "search":
+        response = {'text': "Couldn't find an exact hit. Check your spelling and try again.",
+                    'attachments': []
+                    }
+        if r.get('items'):
+            for item in r['items'][:3]:
+                response['attachments'].append({
+                    'text': "{} -- {}".format(item.get('title'), item.get('snippet')),
+                    'color': '#FF0000',
+                })
+        else:
+            response = {'text': "Please try refining your search to make sure that you aren't crazy."}
     else:
-        response = {'text': "Please try refining your search to make sure that you aren't crazy."}
+        if r.get('items'):
+            return r['items'][0].get('title').split('-')[0]
+        else:
+            response = {'text': "Please try refining your search to make sure that you aren't crazy."}
     return response
 
 

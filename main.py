@@ -43,8 +43,8 @@ def index():
         if len(args) == 1:
             random = Movie.select().order_by(fn.Random())
         else:
-            search = "%{}%".format(args[1:])
-            random = Movie.filter(Movie.genre ** search)
+            search = "%{}%".format(' '.join(args[1:]))
+            random = Movie.filter(Movie.genre ** search).order_by(fn.Random())
         try:
             m = random.get().get_details()
             m['text'] = "You should watch this movie:"
