@@ -44,3 +44,6 @@ class Movie(BaseModel):
                 'color': '#764FA5',
             }]
         }
+
+    def __repr__(self):
+        return "{} [{}]".format(self.name, self.genre)

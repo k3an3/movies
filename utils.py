@@ -26,7 +26,7 @@ def add_movie(movie_title, year=""):
     try:
         return True, Movie.create(name=r['Title'], genre=r['Genre'], imdb_id=r['imdbID'])
     except IntegrityError:
-        return False, "This movie has already been added!"
+        return False, {'text': "This movie has already been added!"}
 
 
 def custom_google_search(query):
@@ -46,3 +46,20 @@ def custom_google_search(query):
     else:
         response = {'text': "Please try refining your search to make sure that you aren't crazy."}
     return response
+
+
+def import_from_file(filename):
+    with open(filename) as f:
+        genre = ""
+        not_added = []
+        for line in f:
+            if line[0] == '#':
+                genre = line[1:]
+            else:
+                s, m = add_movie(line)
+                if not s:
+                    not_added.append(m)
+                else:
+                    print(m)
+    for m in not_added:
+        print(m)
