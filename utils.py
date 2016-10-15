@@ -1,4 +1,5 @@
 import requests
+import subprocess
 from peewee import IntegrityError
 
 from config import GOOGLE_API_KEY, GOOGLE_CX, IMDB_API_URL
@@ -72,3 +73,17 @@ def import_from_file(filename):
                     print(m)
     for m in not_added:
         print(m)
+
+
+def get_genres():
+    genres = []
+    for movie in Movie.select():
+        for genre in movie.genre.split(', '):
+            if genre not in genres:
+                genres.append(genre)
+
+
+def update():
+    subprocess.call(['git', 'pull', 'origin', 'master'])
+    subprocess.call(['/srv/movies/env/bin/pip', 'install', '-r', 'requirements.txt', '--upgrade'])
+    subprocess.call(['sudo', 'systemctl', 'restart', 'movies'])
