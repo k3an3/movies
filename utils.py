@@ -1,5 +1,6 @@
-import requests
 import subprocess
+
+import requests
 from peewee import IntegrityError
 
 from config import GOOGLE_API_KEY, GOOGLE_CX, IMDB_API_URL
@@ -86,4 +87,8 @@ def get_genres():
 def update():
     subprocess.call(['git', 'pull', 'origin', 'master'])
     subprocess.call(['/srv/movies/env/bin/pip', 'install', '-r', 'requirements.txt', '--upgrade'])
+    subprocess.call(['sudo', 'systemctl', 'restart', 'movies'])
+
+
+def reload():
     subprocess.call(['sudo', 'systemctl', 'restart', 'movies'])

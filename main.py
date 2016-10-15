@@ -6,7 +6,7 @@ from peewee import fn
 
 from config import SLACK_TOKEN, SUPPORTED_COMMANDS, DEBUG
 from models import db_init, Movie, db
-from utils import help_text, add_movie, custom_google_search, update
+from utils import help_text, add_movie, custom_google_search, update, reload
 
 app = Flask(__name__)
 
@@ -64,6 +64,9 @@ def index():
         return Response(json.dumps(get_genres()))
     elif args[0] == 'update':
         update()
+        return '', 204
+    elif args[0] == 'reload':
+        reload()
         return '', 204
     return ""
 
