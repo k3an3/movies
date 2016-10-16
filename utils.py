@@ -80,7 +80,7 @@ def import_from_file(filename):
 
 
 def get_genres():
-    for movie in Movie.select().order_by(Movie.name):
+    for movie in Movie.select():
         for genre in movie.genre.split(', '):
             if genre not in genres:
                 genres.append(genre)
@@ -90,7 +90,7 @@ def format_genres():
     if not genres:
         get_genres()
     text = ""
-    for genre in genres:
+    for genre in sorted(genres):
         text += '{0}\n'.format(genre)
     result = {
         'text': 'The following genres are currently available:',
@@ -104,7 +104,7 @@ def format_genres():
 
 def format_movies():
     text = ""
-    for movie in Movie.select():
+    for movie in Movie.select().order_by(Movie.name):
         text += '{0}{1}\n'.format(movie.name,
                                   ':heavy_check_mark:' if movie.watched else '')
     result = {
