@@ -61,7 +61,7 @@ def index():
         movie.save()
         return "Marked {} as watched".format(movie.name)
     elif args[0] == 'genres':
-        return Response(json.dumps((format_genres())))
+        return Response(json.dumps(format_genres()), mimetype='application/json')
     # Management commands
     elif args[0] == 'refresh_genres':
         get_genres()
