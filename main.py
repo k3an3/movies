@@ -6,7 +6,7 @@ from peewee import fn
 
 from config import SLACK_TOKEN, SUPPORTED_COMMANDS, DEBUG
 from models import db_init, Movie, db
-from utils import help_text, add_movie, custom_google_search, update, reload
+from utils import help_text, add_movie, custom_google_search, update, reload, format_genres, get_genres
 
 app = Flask(__name__)
 
@@ -61,7 +61,10 @@ def index():
         movie.save()
         return "Marked {} as watched".format(movie.name)
     elif args[0] == 'genres':
-        return Response(json.dumps(get_genres()))
+        return Response(json.dumps((format_genres())))
+    elif args[0] == 'refresh_genres':
+        get_genres()
+        return '', 204
     elif args[0] == 'update':
         update()
         return '', 204

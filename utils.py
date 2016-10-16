@@ -6,6 +6,8 @@ from peewee import IntegrityError
 from config import GOOGLE_API_KEY, GOOGLE_CX, IMDB_API_URL
 from models import Movie
 
+genres = []
+
 
 def help_text():
     return {'text': "Invalid command. The following commands are recognized:\n",
@@ -29,6 +31,9 @@ def add_movie(movie_title, year="", depth=0):
             return True, add_movie(custom_google_search(movie_title + " " + year, "add"), depth=depth)
         return False, custom_google_search(movie_title + " " + year)
     try:
+        for genre in r['Genre'].split(', '):
+            if genre not in genres:
+                genres.append(genre)
         return True, Movie.create(name=r['Title'], genre=r['Genre'], imdb_id=r['imdbID'])
     except IntegrityError:
         return False, {'text': "This movie has already been added!"}
@@ -77,11 +82,16 @@ def import_from_file(filename):
 
 
 def get_genres():
-    genres = []
     for movie in Movie.select():
         for genre in movie.genre.split(', '):
             if genre not in genres:
                 genres.append(genre)
+
+
+def format_genres():
+    result = ""
+    for genre in genres:
+        result += '{0}\n'.format(genre)
 
 
 def update():
