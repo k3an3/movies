@@ -86,9 +86,16 @@ def get_genres():
 
 
 def format_genres():
-    result = ""
+    text = ""
     for genre in genres:
-        result += '{0}\n'.format(genre)
+        text += '{0}\n'.format(genre)
+    result = {
+        'text': 'The following genres are currently available:',
+        'attachments': [{
+            'color': '#00FF00',
+            'text': text
+        }]
+    }
     return result
 
 
