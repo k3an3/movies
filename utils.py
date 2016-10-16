@@ -66,12 +66,9 @@ def custom_google_search(query, mode="search"):
 
 def import_from_file(filename):
     with open(filename) as f:
-        genre = ""
         not_added = []
         for line in f:
-            if line[0] == '#':
-                genre = line[1:]
-            else:
+            if line[0] != '#':
                 s, m = add_movie(line)
                 if not s:
                     not_added.append(m)
@@ -94,11 +91,11 @@ def format_genres():
         result += '{0}\n'.format(genre)
 
 
+def reload():
+    subprocess.call(['sudo', 'systemctl', 'restart', 'movies'])
+
+
 def update():
     subprocess.call(['git', 'pull', 'origin', 'master'])
     subprocess.call(['/srv/movies/env/bin/pip', 'install', '-r', 'requirements.txt', '--upgrade'])
-    subprocess.call(['sudo', 'systemctl', 'restart', 'movies'])
-
-
-def reload():
-    subprocess.call(['sudo', 'systemctl', 'restart', 'movies'])
+    reload()
