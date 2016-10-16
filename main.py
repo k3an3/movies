@@ -93,5 +93,4 @@ def _db_close(exc):
 if __name__ == "__main__":
     app.debug = DEBUG
     db_init()
-    get_genres()
     app.run()

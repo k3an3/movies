@@ -12,11 +12,12 @@ genres = []
 def help_text():
     return {'text': "Invalid command. The following commands are recognized:\n",
             'attachments': [{
-                'text': ("_choose [category]_ - Select a random movie in the given category. "
+                'text': ("choose [category] - Select a random movie in the given category. "
                          "To pick from all categories, no extra argument is necessary.\n"
-                         "_watched [movie]_ - Mark a movie as watched. "
+                         "watched [movie] - Mark a movie as watched. "
                          "This will prevent it from being selected again.\n"
-                         "_add [movie]_ [-y year] - Add a movie to the list that you'd like to watch in the future.\n"
+                         "add [movie] [-y year] - Add a movie to the list that you'd like to watch in the future.\n"
+                         "genres - List all of the genres that exist within the database."
                          )
             }]
             }
@@ -86,13 +87,15 @@ def get_genres():
 
 
 def format_genres():
+    if not genres:
+        get_genres()
     text = ""
     for genre in genres:
         text += '{0}\n'.format(genre)
     result = {
         'text': 'The following genres are currently available:',
         'attachments': [{
-            'color': '#00FF00',
+            'color': '#001100',
             'text': text
         }]
     }
