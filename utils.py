@@ -80,7 +80,7 @@ def import_from_file(filename):
 
 
 def get_genres():
-    for movie in Movie.select():
+    for movie in Movie.select().order_by(Movie.name):
         for genre in movie.genre.split(', '):
             if genre not in genres:
                 genres.append(genre)
