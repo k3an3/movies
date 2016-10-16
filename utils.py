@@ -105,7 +105,8 @@ def format_genres():
 def format_movies():
     text = ""
     for movie in Movie.select():
-        text += '{0}\n'.format(movie.name)
+        text += '{0}{1}\n'.format(movie.name,
+                                  ':heavy_check_mark:' if movie.watched else '')
     result = {
         'text': 'The following movies are currently available:',
         'attachments': [{

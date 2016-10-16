@@ -58,6 +58,16 @@ def index():
         movie.watched = True
         movie.save()
         return "Marked {} as watched".format(movie.name)
+    elif args[0] == 'unwatch':
+        # Undocumented
+        name = ' '.join(args[1:])
+        try:
+            movie = Movie.get(fn.Lower(Movie.name) == name.lower())
+        except Movie.DoesNotExist:
+            return "Sorry, I couldn't find that movie. You need to be exact."
+        movie.watched = False
+        movie.save()
+        return "Marked {} as un-watched".format(movie.name)
     elif args[0] == 'list':
         data = {'text': "Must specify `movies` or `genres`."}
         if len(args) > 1:
