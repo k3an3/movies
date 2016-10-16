@@ -62,9 +62,10 @@ def index():
         return "Marked {} as watched".format(movie.name)
     elif args[0] == 'genres':
         return Response(json.dumps((format_genres())))
+    # Management commands
     elif args[0] == 'refresh_genres':
         get_genres()
-        return '', 204
+        return 'Done'
     elif args[0] == 'update':
         update()
         return '', 204

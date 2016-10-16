@@ -89,6 +89,7 @@ def format_genres():
     result = ""
     for genre in genres:
         result += '{0}\n'.format(genre)
+    return result
 
 
 def reload():
