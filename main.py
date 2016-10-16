@@ -1,12 +1,13 @@
 import json
+import random
 from functools import wraps
 
 from flask import Flask, request, abort, Response
 from peewee import fn
 
-from config import SLACK_TOKEN, SUPPORTED_COMMANDS, DEBUG
+import config
 from models import db_init, Movie, db
-from utils import help_text, add_movie, custom_google_search, update, reload, format_genres, get_genres
+from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies
 
 app = Flask(__name__)
 
@@ -15,7 +16,7 @@ def auth_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         token = request.form.get('token')
-        if not token == SLACK_TOKEN:
+        if not token == config.SLACK_TOKEN:
             abort(401)
             return f(*args, **kwargs)
 
@@ -30,38 +31,41 @@ def index():
         return '', 400
     args = text.split()
     # Check if we know about this command
-    if len(args) == 0 or args[0] not in SUPPORTED_COMMANDS:
-        return Response(json.dumps(help_text()), mimetype='application/json')
     if args[0] == 'add':
         success, m = add_movie(' '.join(args[1:]))
         if success:
             m = m.get_details()
             m['text'] = "Added movie:"
         return Response(json.dumps(m), mimetype='application/json')
-
     elif args[0] == 'choose':
         if len(args) == 1:
-            random = Movie.select().order_by(fn.Random())
+            rand = Movie.select().order_by(fn.Random())
         else:
             search = "%{}%".format(' '.join(args[1:]))
-            random = Movie.filter(Movie.genre ** search).order_by(fn.Random())
+            rand = Movie.filter(Movie.genre ** search).order_by(fn.Random())
         try:
-            m = random.get().get_details()
-            m['text'] = "You should watch this movie:"
+            m = rand.get().get_details()
+            m['text'] = random.choice(config.SAYINGS)
             return Response(json.dumps(m), mimetype='application/json')
         except Movie.DoesNotExist:
             return "No movies yet!"
     elif args[0] == 'watched':
+        name = ' '.join(args[1:])
         try:
-            name = custom_google_search(' '.join(args[1:]), mode='add')
-            movie = Movie.get(Movie.name == name)
+            movie = Movie.get(fn.Lower(Movie.name) == name.lower())
         except Movie.DoesNotExist:
-            return "Sorry, I couldn't find that movie."
+            return "Sorry, I couldn't find that movie. You need to be exact."
         movie.watched = True
         movie.save()
         return "Marked {} as watched".format(movie.name)
-    elif args[0] == 'genres':
-        return Response(json.dumps(format_genres()), mimetype='application/json')
+    elif args[0] == 'list':
+        if args[1] == 'movies':
+            data = format_movies()
+        elif args[1] == 'genres':
+            data = format_genres()
+        else:
+            data = {'text': "Must specify `movies` or `genres`."}
+        return Response(json.dumps(data), mimetype='application/json')
     # Management commands
     elif args[0] == 'refresh_genres':
         get_genres()
@@ -72,7 +76,7 @@ def index():
     elif args[0] == 'reload':
         reload()
         return '', 204
-    return ""
+    return Response(json.dumps(help_text()), mimetype='application/json')
 
 
 # This hook ensures that a connection is opened to handle any queries
@@ -91,6 +95,6 @@ def _db_close(exc):
 
 
 if __name__ == "__main__":
-    app.debug = DEBUG
+    app.debug = config.DEBUG
     db_init()
     app.run()

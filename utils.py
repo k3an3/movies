@@ -16,8 +16,8 @@ def help_text():
                          "To pick from all categories, no extra argument is necessary.\n"
                          "watched [movie] - Mark a movie as watched. "
                          "This will prevent it from being selected again.\n"
-                         "add [movie] [-y year] - Add a movie to the list that you'd like to watch in the future.\n"
-                         "genres - List all of the genres that exist within the database."
+                         "add [movie] - Add a movie to the list that you'd like to watch in the future.\n"
+                         "list [movies|genres] - List all of the movies or genres that exist within the database."
                          )
             }]
             }
@@ -96,6 +96,20 @@ def format_genres():
         'text': 'The following genres are currently available:',
         'attachments': [{
             'color': '#001100',
+            'text': text
+        }]
+    }
+    return result
+
+
+def format_movies():
+    text = ""
+    for movie in Movie.select():
+        text += '{0}\n'.format(movie.name)
+    result = {
+        'text': 'The following movies are currently available:',
+        'attachments': [{
+            'color': '#000011',
             'text': text
         }]
     }
