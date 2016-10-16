@@ -59,12 +59,12 @@ def index():
         movie.save()
         return "Marked {} as watched".format(movie.name)
     elif args[0] == 'list':
-        if args[1] == 'movies':
-            data = format_movies()
-        elif args[1] == 'genres':
-            data = format_genres()
-        else:
-            data = {'text': "Must specify `movies` or `genres`."}
+        data = {'text': "Must specify `movies` or `genres`."}
+        if len(args) > 1:
+            if args[1] == 'movies':
+                data = format_movies()
+            elif args[1] == 'genres':
+                data = format_genres()
         return Response(json.dumps(data), mimetype='application/json')
     # Management commands
     elif args[0] == 'refresh_genres':
