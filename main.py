@@ -73,7 +73,7 @@ def index():
         if len(args) > 1:
             if args[1] == 'movies':
                 if len(args) > 2:
-                    format_movies(' '.join(args[2:]))
+                    data = format_movies(' '.join(args[2:]))
                 else:
                     data = format_movies()
             elif args[1] == 'genres':
