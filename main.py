@@ -7,7 +7,7 @@ from peewee import fn
 
 import config
 from models import db_init, Movie, db
-from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies
+from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies, movies_in_genre
 
 app = Flask(__name__)
 
@@ -41,8 +41,8 @@ def index():
         if len(args) == 1:
             rand = Movie.select().order_by(fn.Random())
         else:
-            search = "%{}%".format(' '.join(args[1:]))
-            rand = Movie.filter(Movie.genre ** search).order_by(fn.Random())
+            genre = ' '.join(args[1:])
+            rand = movies_in_genre(genre).order_by(fn.Random())
         try:
             m = rand.get().get_details()
             m['text'] = random.choice(config.SAYINGS)
@@ -72,6 +72,8 @@ def index():
         data = {'text': "Must specify `movies` or `genres`."}
         if len(args) > 1:
             if args[1] == 'movies':
+                if len(args) > 2:
+                    format_movies(' '.join(args[2:]))
                 data = format_movies()
             elif args[1] == 'genres':
                 data = format_genres()

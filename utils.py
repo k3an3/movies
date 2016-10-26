@@ -102,9 +102,18 @@ def format_genres():
     return result
 
 
-def format_movies():
+def movies_in_genre(genre):
+    search = "%{}%".format(genre)
+    return Movie.filter(Movie.genre ** search).order_by(Movie.name)
+
+
+def format_movies(genre=None):
     text = ""
-    for movie in Movie.select().order_by(Movie.name):
+    if genre:
+        movies = movies_in_genre(genre)
+    else:
+        movies = Movie.select().order_by(Movie.name)
+    for movie in movies:
         text += '{0}{1}\n'.format(movie.name,
                                   ':heavy_check_mark:' if movie.watched else '')
     result = {
@@ -122,6 +131,8 @@ def reload():
 
 
 def update():
+    subprocess.call(['git', 'stash'])
     subprocess.call(['git', 'pull', 'origin', 'master'])
+    subprocess.call(['git', 'stash', 'apply'])
     subprocess.call(['/srv/movies/env/bin/pip', 'install', '-r', 'requirements.txt', '--upgrade'])
     reload()
