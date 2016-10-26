@@ -74,7 +74,8 @@ def index():
             if args[1] == 'movies':
                 if len(args) > 2:
                     format_movies(' '.join(args[2:]))
-                data = format_movies()
+                else:
+                    data = format_movies()
             elif args[1] == 'genres':
                 data = format_genres()
         return Response(json.dumps(data), mimetype='application/json')
