@@ -19,7 +19,20 @@
                 <nav>
                     <ul class="nav nav-pills float-xs-right">
                         <li class="nav-item">
-                            <a class="nav-link active" href="/">Choose Another</a>
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Genre
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" style="text-align:center">
+                                    {% for genre in list_genres %}
+                                    <li><a href="/?genre={{ genre }}">{{ genre }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/{% if genre %}?genre={{ genre }}{% endif %}">Choose Another</a>
                         </li>
                     </ul>
                 </nav>
@@ -44,5 +57,11 @@
             </footer>
 
         </div>
+        <script
+                    src="https://code.jquery.com/jquery-3.1.1.min.js"
+                    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+                    crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
     </body>
 </html>

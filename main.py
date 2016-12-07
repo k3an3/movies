@@ -7,7 +7,7 @@ from peewee import fn
 
 import config
 from models import db_init, Movie, db
-from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies, movies_in_genre
+from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies, movies_in_genre, genres
 
 app = Flask(__name__)
 
@@ -25,9 +25,9 @@ def auth_required(f):
 
 @app.route("/")
 def index():
-    if request.args.get('genre'):
-        genre = ' '.join(args[1:])
-        movie = movies_in_genre(request.args.get('genre')).order_by(fn.Random()).get()
+    genre = request.args.get('genre')
+    if genre:
+        movie = movies_in_genre(genre).order_by(fn.Random()).get()
     else:
         movie = Movie.select().order_by(fn.Random()).get()
     r = movie.get_details(plot="full")
@@ -36,9 +36,14 @@ def index():
     description = r['attachments'][0]['text']
     image = r['attachments'][0]['image_url']
     saying = random.choice(config.SAYINGS)
+    if not genres:
+        get_genres()
+    list_genres = []
+    list_genres.append("Any")
+    list_genres.extend(sorted(genres))
     return render_template("index.html", **locals())
 
-#@auth_required
+@auth_required
 @app.route("/command", methods=['POST'])
 def command():
     text = request.form.get('text')
