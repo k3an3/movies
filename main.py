@@ -2,7 +2,7 @@ import json
 import random
 from functools import wraps
 
-from flask import Flask, request, abort, Response
+from flask import Flask, request, abort, Response, render_template
 from peewee import fn
 
 import config
@@ -23,9 +23,24 @@ def auth_required(f):
     return decorated_function
 
 
-@auth_required
-@app.route("/command", methods=['POST'])
+@app.route("/")
 def index():
+    if request.args.get('genre'):
+        genre = ' '.join(args[1:])
+        movie = movies_in_genre(request.args.get('genre')).order_by(fn.Random()).get()
+    else:
+        movie = Movie.select().order_by(fn.Random()).get()
+    r = movie.get_details(plot="full")
+    title = r['attachments'][0]['title']
+    link = r['attachments'][0]['title_link']
+    description = r['attachments'][0]['text']
+    image = r['attachments'][0]['image_url']
+    saying = random.choice(config.SAYINGS)
+    return render_template("index.html", **locals())
+
+#@auth_required
+@app.route("/command", methods=['POST'])
+def command():
     text = request.form.get('text')
     if not text:
         return '', 400

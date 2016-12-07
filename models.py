@@ -30,8 +30,8 @@ class Movie(BaseModel):
     imdb_id = CharField(max_length=16)
     watched = BooleanField(default=False)
 
-    def get_details(self):
-        url = IMDB_API_URL + '&i={}'.format(self.imdb_id)
+    def get_details(self, plot="short"):
+        url = IMDB_API_URL + '&i={}&plot={}'.format(self.imdb_id, plot)
         r = requests.get(url).json()
         return {
             'text': '',

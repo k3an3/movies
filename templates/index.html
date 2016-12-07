@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../../favicon.ico">
+
+        <title>Movies @ 105ww</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+        <link href="/static/narrow-jumbotron.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="header clearfix">
+                <nav>
+                    <ul class="nav nav-pills float-xs-right">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">Choose Another</a>
+                        </li>
+                    </ul>
+                </nav>
+                <h3 class="text-muted">Movie Master</h3>
+            </div>
+
+
+            <div style="text-align:center">
+                <h3>{{ saying }}</h3>
+                <a href="{{ link }}"><h1>{{ title }}</h1></a>
+                {% if not image == "N/A" %}
+                <img src="{{ image }}" />
+                <br>
+                <br>
+                {% endif %}
+                <p><i>{{ description }}</i></p>
+                <p><a href="{{ link }}">View more on IMDB</a></p>
+            </div>
+
+            <footer class="footer">
+                <p>&copy; 105ww.xyz 2016</p>
+            </footer>
+
+        </div>
+    </body>
+</html>
