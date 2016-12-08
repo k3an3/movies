@@ -26,7 +26,7 @@ def auth_required(f):
 @app.route("/")
 def index():
     genre = request.args.get('genre')
-    if genre:
+    if genre and genre.lower() != "any":
         movie = movies_in_genre(genre).order_by(fn.Random()).get()
     else:
         movie = Movie.select().order_by(fn.Random()).get()
