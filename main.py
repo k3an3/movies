@@ -7,7 +7,8 @@ from peewee import fn
 
 import config
 from models import db_init, Movie, db
-from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies, movies_in_genre, genres
+from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies, movies_in_genre, \
+    genres, get_netflix_id
 
 app = Flask(__name__)
 
@@ -35,6 +36,7 @@ def index():
     link = r['attachments'][0]['title_link']
     description = r['attachments'][0]['text']
     image = r['attachments'][0]['image_url']
+    netflix = get_netflix_id(title.split(' (')[0])
     saying = random.choice(config.SAYINGS)
     if not genres:
         get_genres()
@@ -42,6 +44,7 @@ def index():
     list_genres.append("Any")
     list_genres.extend(sorted(genres))
     return render_template("index.html", **locals())
+
 
 @auth_required
 @app.route("/command", methods=['POST'])

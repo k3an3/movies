@@ -7,6 +7,7 @@ from config import GOOGLE_API_KEY, GOOGLE_CX, IMDB_API_URL
 from models import Movie
 
 genres = []
+netflix_api_url = 'http://netflixroulette.net/api/api.php?'
 
 
 def help_text():
@@ -136,3 +137,10 @@ def update():
     subprocess.call(['git', 'stash', 'apply'])
     subprocess.call(['/srv/movies/env/bin/pip', 'install', '-r', 'requirements.txt', '--upgrade'])
     reload()
+
+
+def get_netflix_id(show_title, year=0):
+    title = show_title
+    title = title.replace(" ", "%20")
+    payload = requests.get("{}title={}&year={}".format(netflix_api_url, title, year)).json()
+    return payload.get('show_id')
