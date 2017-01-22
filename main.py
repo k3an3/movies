@@ -36,7 +36,7 @@ def index():
     link = r['attachments'][0]['title_link']
     description = r['attachments'][0]['text']
     image = r['attachments'][0]['image_url']
-    netflix = get_netflix_id(title.split(' (')[0])
+    netflix = get_netflix_id(title.split(' (')[0], title.split('(')[-1].split(')')[-2])
     saying = random.choice(config.SAYINGS)
     if not genres:
         get_genres()
