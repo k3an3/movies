@@ -1,3 +1,5 @@
+import hashlib
+import os
 import subprocess
 
 import requests
@@ -8,6 +10,11 @@ from models import Movie
 
 genres = []
 netflix_api_url = 'http://netflixroulette.net/api/api.php?'
+
+try:
+    VERSION = 'v' + subprocess.check_output(['git', 'describe', '--tags', 'HEAD']).decode('UTF-8')
+except:
+    VERSION = 'unknown'
 
 
 def help_text():
@@ -67,6 +74,11 @@ def custom_google_search(query, mode="search"):
 
 
 def import_from_file(filename):
+    """
+    Read a file, one movie per line, and try to add each movie to the database
+    :param filename:
+    :return:
+    """
     with open(filename) as f:
         not_added = []
         for line in f:

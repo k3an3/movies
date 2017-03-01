@@ -1,12 +1,12 @@
 import requests
 from peewee import *
 
-from config import DEBUG, IMDB_API_URL
+from config import DEBUG, IMDB_API_URL, DB_USER, DB_PASS
 
 if DEBUG:
     db = SqliteDatabase('app.db')
 else:
-    db = MySQLDatabase(host="localhost", database="movies", user="movies", passwd="changeme")
+    db = MySQLDatabase(host="localhost", database="movies", user=DB_USER, passwd=DB_PASS)
 
 
 def db_init():

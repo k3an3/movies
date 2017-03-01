@@ -1,3 +1,4 @@
+import datetime
 import json
 import random
 from functools import wraps
@@ -40,9 +41,9 @@ def index():
     saying = random.choice(config.SAYINGS)
     if not genres:
         get_genres()
-    list_genres = []
-    list_genres.append("Any")
+    list_genres = ["Any"]
     list_genres.extend(sorted(genres))
+    year = datetime.datetime.now().year
     return render_template("index.html", **locals())
 
 
@@ -82,7 +83,7 @@ def command():
         movie.save()
         return "Marked _{}_ as watched".format(movie.name)
     elif args[0] == 'unwatch':
-        # Undocumented
+        # Undocumented commands
         name = ' '.join(args[1:])
         try:
             movie = Movie.get(fn.Lower(Movie.name) == name.lower())
@@ -128,6 +129,15 @@ def _db_connect():
 def _db_close(exc):
     if not db.is_closed():
         db.close()
+
+
+def add_header(response):
+    response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self' 'unsafe-inline'" \
+                                                  " https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css" \
+                                                  "/bootstrap.min.css; img-src * ;" \
+                                                  "script-src https://code.jquery.com/jquery-3.1.1.min.js " \
+                                                  "https://code.jquery.com/jquery-3.1.1.min.js "
+    return response
 
 
 if __name__ == "__main__":
