@@ -1,5 +1,3 @@
-import hashlib
-import os
 import subprocess
 
 import requests
@@ -18,6 +16,9 @@ except:
 
 
 def help_text():
+    """
+    :return: Help text when a user sends an invalid command
+    """
     return {'text': "Invalid command. The following commands are recognized:\n",
             'attachments': [{
                 'text': ("choose [category] - Select a random movie in the given category. "
@@ -31,12 +32,21 @@ def help_text():
             }
 
 
-def add_movie(movie_title, year="", depth=0):
+def add_movie(movie_title: str, year: str = "", depth: int = 0) -> bool:
+    """
+    Search for and add a movie. Called recursively with a refined
+    search if results aren't found on the first try.
+    :param movie_title: Title of the movie
+    :param year: Narrow down the search with a release year
+    :param depth: Current level of recursion
+    :return:
+    """
     url = IMDB_API_URL + '&t={}&y='.format(movie_title, year)
     r = requests.get(url).json()
     if r.get('Response') == 'False':
         depth += 1
         if depth < 3:
+            # Recurse
             return True, add_movie(custom_google_search(movie_title + " " + year, "add"), depth=depth)
         return False, custom_google_search(movie_title + " " + year)
     try:
@@ -48,7 +58,7 @@ def add_movie(movie_title, year="", depth=0):
         return False, {'text': "This movie has already been added!"}
 
 
-def custom_google_search(query, mode="search"):
+def custom_google_search(query: str, mode: str = "search"):
     url = 'https://www.googleapis.com/customsearch/v1?key={}&cx={}&q={}'.format(
         GOOGLE_API_KEY, GOOGLE_CX, query
     )
@@ -64,16 +74,16 @@ def custom_google_search(query, mode="search"):
                     'color': '#FF0000',
                 })
         else:
-            response = {'text': "Please try refining your search to make sure that you aren't crazy."}
+            response = {'text': "Please try refining your search to make sure that you aren't wrong."}
     else:
         if r.get('items'):
             return r['items'][0].get('title').split(' -')[1]
         else:
-            response = {'text': "Please try refining your search to make sure that you aren't crazy."}
+            response = {'text': "Please try refining your search to make sure that you aren't wrong."}
     return response
 
 
-def import_from_file(filename):
+def import_from_file(filename: str):
     """
     Read a file, one movie per line, and try to add each movie to the database
     :param filename:
