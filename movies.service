@@ -1,0 +1,14 @@
+[Unit]
+Description=Does my movies
+After=network.target
+
+[Service]
+User=movies
+Group=movies
+WorkingDirectory=/srv/movies/
+ExecStart=/srv/movies/start.sh
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
