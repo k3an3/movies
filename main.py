@@ -9,7 +9,7 @@ from peewee import fn
 import config
 from models import db_init, Movie, db
 from utils import help_text, add_movie, update, reload, format_genres, get_genres, format_movies, movies_in_genre, \
-    genres, get_netflix_id
+    genres, get_netflix_id, VERSION
 
 app = Flask(__name__)
 
@@ -44,6 +44,7 @@ def index():
     list_genres = ["Any"]
     list_genres.extend(sorted(genres))
     year = datetime.datetime.now().year
+    version = VERSION
     return render_template("index.html", **locals())
 
 
