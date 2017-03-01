@@ -1,6 +1,16 @@
 import sys
 
+from peewee import SqliteDatabase, MySQLDatabase
+
 DEBUG = False
+DB_USER = 'movies'
+DB_PASS = 'changeme'
+
+if DEBUG:
+    db = SqliteDatabase('app.db')
+else:
+    db = MySQLDatabase(host="localhost", database="movies", user=DB_USER, passwd=DB_PASS)
+
 IMDB_API_URL = 'http://www.omdbapi.com/?type=movie'
 # Things to print with each random movie pick
 SAYINGS = (
@@ -33,8 +43,6 @@ SAYINGS = (
     "I smell popcorn...",
 )
 
-DB_USER = 'movies'
-DB_PASS = 'changeme'
 
 try:
     from config_local import *
