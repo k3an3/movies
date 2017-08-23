@@ -12,6 +12,7 @@ else:
     db = MySQLDatabase(host="localhost", database="movies", user=DB_USER, passwd=DB_PASS)
 
 IMDB_API_URL = 'http://www.omdbapi.com/?type=movie'
+OMDB_API_KEY = 'changeme'
 # Things to print with each random movie pick
 SAYINGS = (
     "You should watch this movie:",

@@ -1,7 +1,7 @@
 import requests
 from peewee import *
 
-from config import IMDB_API_URL, db
+from config import IMDB_API_URL, db, OMDB_API_KEY
 
 
 def db_init():
@@ -26,7 +26,7 @@ class Movie(BaseModel):
     watched = BooleanField(default=False)
 
     def get_details(self, plot="short"):
-        url = IMDB_API_URL + '&i={}&plot={}'.format(self.imdb_id, plot)
+        url = IMDB_API_URL + '&i={}&plot={}&apikey={}'.format(self.imdb_id, plot, OMDB_API_KEY)
         r = requests.get(url).json()
         return {
             'text': '',
